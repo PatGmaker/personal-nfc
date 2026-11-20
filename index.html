@@ -6,6 +6,17 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Patrick Astrera, IT student at ACTS Computer College. Mobile apps, web projects and digital invitations.">
 <meta name="theme-color" content="#0a1f4d">
+<link rel="canonical" href="https://patgmaker.github.io/personal-nfc/">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://patgmaker.github.io/personal-nfc/">
+<meta property="og:title" content="Patrick P. Astrera · IT Student">
+<meta property="og:description" content="Mobile apps, web design, business websites, and digital video invitations. Tap to save my contact.">
+<meta property="og:image" content="https://patgmaker.github.io/personal-nfc/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Patrick P. Astrera, IT Student at ACTS Computer College">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://patgmaker.github.io/personal-nfc/og.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap">
 <style>
   /* Layout: one phone-width column. Photo card leads, Save Contact is the one primary action,
@@ -198,7 +209,8 @@ const P = {
   email: "patricklaptop30@gmail.com",
   address: "Brgy. Catablingan, General Nakar, Quezon",
   maps: "https://maps.app.goo.gl/9Vgycv4kLygZojGy7",
-  gcash: "09317628695",              // GCash number, o "" para itago ang GCash
+  gcash: "09317628695",
+  goatcounter: "",                   // GoatCounter code mo (hal. "patrick"), o "" para walang counter              // GCash number, o "" para itago ang GCash
   links: [                           // icon: msg, fb, ig
     { label: "Messenger", sub: "Chat with me", url: "https://m.me/PatrickP.astrera", icon: "msg", cls: "messenger" },
     { label: "Facebook", sub: "Personal profile", url: "https://www.facebook.com/share/1EP8GsyMfA/", icon: "fb", cls: "facebook" },
@@ -221,18 +233,41 @@ const icon = n => `<svg aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const text = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 const prettyPhone = p => p.replace(/^(\d{4})(\d{3})(\d{4})$/, "$1 $2 $3");
 
-function vcard(p) {
+// vCard lines are folded at 75 chars (RFC 6350); long unfolded PHOTO lines break on some phones.
+const fold = line => line.length <= 75 ? line : line.slice(0, 75) + line.slice(75).replace(/.{1,74}/g, m => "\r\n " + m);
+
+// Square, face-centred 300px JPEG for the contact picture, cut from the page photo.
+function contactPhoto() {
+  return new Promise(resolve => {
+    if (!P.photo) return resolve("");
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas"); c.width = c.height = 300;
+      const side = img.naturalWidth * 0.5, sx = img.naturalWidth * 0.25, sy = img.naturalHeight * 0.17;
+      c.getContext("2d").drawImage(img, sx, sy, side, side, 0, 0, 300, 300);
+      resolve(c.toDataURL("image/jpeg", 0.82).split(",")[1]);
+    };
+    img.onerror = () => resolve("");
+    img.src = P.photo;
+  });
+}
+
+function vcard(p, photo = "") {
   return ["BEGIN:VCARD", "VERSION:3.0",
     "FN:" + esc(p.name), "ORG:" + esc(p.org), "TITLE:" + esc(p.role),
     "TEL;TYPE=CELL:" + p.phone, "EMAIL:" + p.email,
     "ADR;TYPE=HOME:;;" + esc(p.address) + ";;;;",
-    ...p.links.map(l => "URL:" + l.url), "END:VCARD"].join("\r\n");
+    ...p.links.map(l => "URL:" + l.url),
+    ...(photo ? ["PHOTO;ENCODING=b;TYPE=JPEG:" + photo] : []),
+    "END:VCARD"].map(fold).join("\r\n");
 }
 console.assert(vcard({ ...P, name: "A,B" }).includes("FN:A\\,B"), "vCard escaping broken");
 console.assert(prettyPhone("09317628695") === "0931 762 8695", "phone format broken");
 
-function saveContact() {
-  const url = URL.createObjectURL(new Blob([vcard(P)], { type: "text/vcard" }));
+console.assert(fold("x".repeat(200)).split("\r\n").every(l => l.length <= 75), "vCard folding broken");
+
+async function saveContact() {
+  const url = URL.createObjectURL(new Blob([vcard(P, await contactPhoto())], { type: "text/vcard" }));
   const a = Object.assign(document.createElement("a"), { href: url, download: P.name.replace(/\W+/g, "_") + ".vcf" });
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -272,6 +307,20 @@ $("details").innerHTML = [["phone", prettyPhone(P.phone)], ["mail", P.email], ["
 
 P.links.forEach(l => $("links").append(row(l)));
 P.work.forEach(l => $("work").append(row(l)));
+
+// Tap counter (GoatCounter): page views plus which buttons people press.
+if (P.goatcounter) {
+  const gc = document.createElement("script");
+  gc.async = true; gc.src = "https://gc.zgo.at/count.js";
+  gc.dataset.goatcounter = "https://" + P.goatcounter + ".goatcounter.com/count";
+  document.head.append(gc);
+  document.addEventListener("click", e => {
+    const el = e.target.closest("a, button");
+    if (!el || !window.goatcounter?.count) return;
+    const name = (el.querySelector("b")?.textContent || el.textContent).trim().replace(/\s+/g, " ").slice(0, 40);
+    window.goatcounter.count({ path: "tap-" + name.toLowerCase().replace(/\W+/g, "-"), title: name, event: true });
+  });
+}
 P.apps.forEach(l => $("apps").append(row(l, true)));
 
 // GCash: walang official link na naglalagay ng number sa Send Money,
