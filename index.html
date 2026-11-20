@@ -44,8 +44,8 @@
   a { color:inherit; }
   :focus-visible { outline:3px solid var(--ring); outline-offset:3px; border-radius:var(--r-sm); }
 
-  .banner { height:140px; background:radial-gradient(120% 140% at 50% -10%, var(--navy-2), var(--navy)); }
-  main { max-width:440px; margin:-104px auto 0; padding-block:0 44px;
+  .banner { height:200px; background:radial-gradient(120% 140% at 50% -10%, var(--navy-2), var(--navy)); }
+  main { max-width:440px; margin:-120px auto 0; padding-block:0 44px;
     padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
 
   /* Profile card */
@@ -134,6 +134,42 @@
     border:1.5px solid #ffffff59; animation:ring 4.5s cubic-bezier(.2,.6,.3,1) infinite; }
   .banner b:nth-child(2) { animation-delay:1.5s; } .banner b:nth-child(3) { animation-delay:3s; }
   @keyframes ring { from { transform:scale(.4); opacity:0; } 15% { opacity:1; } to { transform:scale(7); opacity:0; } }
+  /* Cover banner: photo under a navy wash, rings on top */
+  .banner.has-cover { background:linear-gradient(180deg, #0a1f4d66, #0a1f4dd9), var(--cover) center 40% / cover no-repeat, var(--navy); }
+  .banner b { top:70px; }
+
+  /* Verified badge */
+  .verified { display:inline-block; width:.8em; height:.8em; margin-left:.22em; vertical-align:-.06em; color:#1d9bf0; }
+  .verified svg { width:100%; height:100%; display:block; }
+
+  /* Copy buttons in Details */
+  .row { grid-template-columns:18px 1fr auto; }
+  .copy { display:grid; place-items:center; width:36px; height:36px; margin:-9px -8px -9px 0; border:0; border-radius:10px; background:transparent; color:var(--muted); cursor:pointer; transition:background .18s, color .18s, transform .18s var(--ease); }
+  .copy svg { width:17px; height:17px; }
+  .copy:hover { background:var(--surface-2); color:var(--blue); }
+  .copy:active { transform:scale(.92); }
+  .copy.done { color:#16a34a; }
+
+  /* Theme toggle */
+  .theme { position:absolute; z-index:5; top:calc(12px + env(safe-area-inset-top, 0px)); right:max(12px, env(safe-area-inset-right, 0px));
+    display:grid; place-items:center; width:44px; height:44px; border:1px solid #ffffff33; border-radius:50%;
+    background:#0a1f4d99; color:#fff; cursor:pointer; backdrop-filter:blur(6px); transition:transform .18s var(--ease), background .18s; }
+  .theme svg { width:19px; height:19px; }
+  .theme:hover { background:#0a1f4dcc; transform:rotate(-12deg); }
+  .theme:active { transform:scale(.92); }
+
+  /* Tap-in intro: a small NFC card grows into the profile, once, under a second */
+  .intro { position:fixed; inset:0; z-index:20; display:grid; place-items:center; background:var(--bg); pointer-events:none;
+    animation:introOut .45s .62s ease forwards; }
+  .mini { width:200px; aspect-ratio:85.6 / 54; border-radius:12px; padding:14px; display:flex; flex-direction:column; justify-content:space-between;
+    background:radial-gradient(120% 140% at 85% 110%, #1b4fb8, #0d2a6b 45%, #071535); color:#fff; box-shadow:0 18px 40px -12px #0f172a66;
+    animation:introCard .9s var(--ease) both; }
+  .mini svg { width:22px; height:22px; }
+  .mini span { font:700 15px/1.1 var(--display); letter-spacing:-.01em; }
+  @keyframes introCard { 0% { transform:translateY(24px) scale(.85) rotate(-6deg); opacity:0; } 35% { transform:none; opacity:1; } 100% { transform:scale(2.4); opacity:0; } }
+  @keyframes introOut { to { opacity:0; visibility:hidden; } }
+  .profile { animation-delay:.55s; }
+  @media (prefers-reduced-motion: reduce) { .intro { display:none; } }
   @keyframes rise { from { transform:translateY(14px); } to { transform:none; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
 </style>
@@ -155,12 +191,19 @@
   <symbol id="i-store" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 9 5 4h14l2 5M3 9h18M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0M5 12v8h14v-8M10 20v-5h4v5"/></symbol>
   <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z" fill="currentColor"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8ZM19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9Z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><path fill="currentColor" d="m12 1.5 2.6 1.9 3.2-.1 1 3.1 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3.1-3.2-.1L12 22.5l-2.6-1.9-3.2.1-1-3.1-2.6-1.9 1-3.1-1-3.1 2.6-1.9 1-3.1 3.2.1Z"/><path d="m8 12.2 2.7 2.7L16.2 9.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v13m-5-5 5 5 5-5"/></symbol>
 </svg>
 
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
-<div class="banner" aria-hidden="true"><b></b><b></b><b></b></div>
+<div class="banner" id="banner" aria-hidden="true"><b></b><b></b><b></b></div>
+<button class="theme" id="theme" type="button" aria-label="Switch to dark mode"><svg aria-hidden="true"><use href="#i-moon"/></svg></button>
+<div class="intro" id="intro" aria-hidden="true"><div class="mini"><svg><use href="#i-nfc"/></svg><span></span></div></div>
 <main>
   <section class="profile" aria-labelledby="name">
     <div class="photo" id="photo">
@@ -209,6 +252,8 @@ const P = {
   email: "patricklaptop30@gmail.com",
   address: "Brgy. Catablingan, General Nakar, Quezon",
   maps: "https://maps.app.goo.gl/9Vgycv4kLygZojGy7",
+  cover: "cover.jpg",                // banner photo sa itaas, o "" para plain navy
+  verified: true,                    // asul na check sa tabi ng pangalan
   gcash: "09317628695",
   goatcounter: "patrick",                 // GoatCounter code mo (hal. "patrick"), o "" para walang counter              // GCash number, o "" para itago ang GCash
   links: [                           // icon: msg, fb, ig
@@ -287,6 +332,27 @@ function row(item, isApp) {
 }
 
 $("name").textContent = P.name;
+if (P.verified) $("name").insertAdjacentHTML("beforeend", '<span class="verified" role="img" aria-label="Verified"><svg aria-hidden="true"><use href="#i-badge"/></svg></span>');
+document.querySelector(".intro .mini span").textContent = P.name;
+if (P.cover) { $("banner").classList.add("has-cover"); $("banner").style.setProperty("--cover", `url("${P.cover}")`); }
+
+// Theme toggle: follows the phone until tapped, then remembers the choice on this phone.
+const root = document.documentElement;
+const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+function paintThemeButton() {
+  const dark = isDark();
+  $("theme").innerHTML = icon(dark ? "sun" : "moon");
+  $("theme").setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+}
+try { const t = localStorage.getItem("card-theme"); if (t) root.dataset.theme = t; } catch {}
+paintThemeButton();
+$("theme").onclick = () => {
+  root.dataset.theme = isDark() ? "light" : "dark";
+  try { localStorage.setItem("card-theme", root.dataset.theme); } catch {}
+  paintThemeButton();
+};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", paintThemeButton);
+setTimeout(() => $("intro").remove(), 1200);
 $("role").textContent = P.role + " · " + P.org;
 $("bio").textContent = P.bio;
 $("skills").innerHTML = P.skills.map(([t, i]) => `<li>${icon(i)}${text(t)}</li>`).join("");
@@ -302,8 +368,19 @@ $("save").onclick = saveContact;
   $("contact").append(a);
 });
 
-$("details").innerHTML = [["phone", prettyPhone(P.phone)], ["mail", P.email], ["pin", P.address], ["school", P.org]]
-  .map(([i, v]) => `<div class="row">${icon(i)}<span>${text(v)}</span></div>`).join("");
+$("details").innerHTML = [["phone", prettyPhone(P.phone), P.phone], ["mail", P.email, P.email], ["pin", P.address], ["school", P.org]]
+  .map(([i, v, copy]) => `<div class="row">${icon(i)}<span>${text(v)}</span>${copy
+    ? `<button class="copy" type="button" data-copy="${text(copy)}" aria-label="Copy ${i === "phone" ? "number" : "email"}">${icon("copy")}</button>` : ""}</div>`).join("");
+
+// Copy buttons: clipboard when allowed, otherwise select the text so the phone's own Copy works.
+$("details").addEventListener("click", async e => {
+  const b = e.target.closest(".copy"); if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copy); }
+  catch { getSelection().selectAllChildren(b.previousElementSibling); }
+  b.classList.add("done"); b.innerHTML = icon("check");
+  $("toast").textContent = "Copied " + b.previousElementSibling.textContent;
+  setTimeout(() => { b.classList.remove("done"); b.innerHTML = icon("copy"); }, 1600);
+});
 
 P.links.forEach(l => $("links").append(row(l)));
 P.work.forEach(l => $("work").append(row(l)));
