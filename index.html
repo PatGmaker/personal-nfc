@@ -27,8 +27,9 @@
     --blue:#3b82f6; --tint:#16264d; color-scheme:dark }
 
   * { box-sizing:border-box; }
+  html { background:var(--bg); }
   ::selection { background:var(--blue-2); color:#fff; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 var(--body); -webkit-font-smoothing:antialiased; }
+  body { margin:0; background:transparent; color:var(--fg); font:15px/1.55 var(--body); -webkit-font-smoothing:antialiased; }
   a { color:inherit; }
   :focus-visible { outline:3px solid var(--ring); outline-offset:3px; border-radius:var(--r-sm); }
 
@@ -96,6 +97,25 @@
   .toast:empty { display:none; }
   footer { text-align:center; color:var(--muted); font-size:12px; margin-top:28px; }
 
+
+  /* Ambient background: three soft orbs drift slowly; NFC rings pulse out of the banner */
+  :root { --orb1:#8db5ff; --orb2:#c3d6ff; --orb3:#9fdcc0; --orb-o:.55; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --orb1:#1e4fd6; --orb2:#0e2f7a; --orb3:#0d5a43; --orb-o:.5; } }
+  :root[data-theme="dark"] { --orb1:#1e4fd6; --orb2:#0e2f7a; --orb3:#0d5a43; --orb-o:.5; }
+  .bg { position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+  .bg i { position:absolute; width:75vmax; height:75vmax; border-radius:50%; filter:blur(70px); opacity:var(--orb-o); will-change:transform; }
+  .bg i:nth-child(1) { background:var(--orb1); top:-30vmax; left:-25vmax; animation:drift1 24s ease-in-out infinite alternate; }
+  .bg i:nth-child(2) { background:var(--orb2); top:30vh; right:-35vmax; animation:drift2 30s ease-in-out infinite alternate; }
+  .bg i:nth-child(3) { background:var(--orb3); bottom:-40vmax; left:-10vmax; opacity:calc(var(--orb-o) * .7); animation:drift3 27s ease-in-out infinite alternate; }
+  @keyframes drift1 { to { transform:translate(18vmax, 22vmax) scale(1.15); } }
+  @keyframes drift2 { to { transform:translate(-22vmax, -12vmax) scale(.9); } }
+  @keyframes drift3 { to { transform:translate(20vmax, -18vmax) scale(1.1); } }
+
+  .banner { position:relative; overflow:hidden; }
+  .banner b { position:absolute; left:50%; top:46px; width:60px; height:60px; margin-left:-30px; border-radius:50%;
+    border:1.5px solid #ffffff59; animation:ring 4.5s cubic-bezier(.2,.6,.3,1) infinite; }
+  .banner b:nth-child(2) { animation-delay:1.5s; } .banner b:nth-child(3) { animation-delay:3s; }
+  @keyframes ring { from { transform:scale(.4); opacity:0; } 15% { opacity:1; } to { transform:scale(7); opacity:0; } }
   @keyframes rise { from { transform:translateY(14px); } to { transform:none; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
 </style>
@@ -115,7 +135,8 @@
   <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v13m-5-5 5 5 5-5"/></symbol>
 </svg>
 
-<div class="banner" aria-hidden="true"></div>
+<div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="banner" aria-hidden="true"><b></b><b></b><b></b></div>
 <main>
   <section class="profile" aria-labelledby="name">
     <div class="photo" id="photo">
