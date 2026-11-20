@@ -97,6 +97,7 @@
   .facebook { background:#1877f2; } .instagram { background:linear-gradient(135deg,#f58529,#dd2a7b 55%,#8134af); }
   .gcash { background:#005ce6; }
   .pay-note { margin:10px 6px 0; text-align:left; }
+  .work { background:#0a1f4d; }
   .app-cook { background:#e8590c; } .app-fore { background:#0f7b4d; }
 
   .toast { text-align:center; color:var(--muted); font-size:13px; min-height:1.4em; margin:0 22px 14px; }
@@ -169,6 +170,9 @@
   <h2 id="h-social">Social media</h2>
   <div class="group" id="links" aria-labelledby="h-social"></div>
 
+  <h2 id="h-work">My Work</h2>
+  <div class="group" id="work" aria-labelledby="h-work"></div>
+
   <h2 id="h-apps">My Apps</h2>
   <div class="group" id="apps" aria-labelledby="h-apps"></div>
 
@@ -200,6 +204,9 @@ const P = {
     { label: "Facebook", sub: "Personal profile", url: "https://www.facebook.com/share/1EP8GsyMfA/", icon: "fb", cls: "facebook" },
     { label: "Facebook Page", sub: "Business page", url: "https://www.facebook.com/share/1CNHMHVqWs/", icon: "fb", cls: "facebook" },
     { label: "Instagram", sub: "@patr_ast", url: "https://www.instagram.com/patr_ast", icon: "ig", cls: "instagram" },
+  ],
+  work: [                           // mga sample ng gawa mo (website, invitation, atbp.)
+    { label: "1st Birthday and Baptism", sub: "Digital invitation · jairuz.netlify.app", url: "https://jairuz.netlify.app/", icon: "film", cls: "work" },
   ],
   apps: [                            // url: Google Drive link o APK file sa tabi nito
     { label: "CookMate.AI", sub: "Mobile app · Google Drive", url: "https://drive.google.com/file/d/12renyboOWtkeME4YyFejfGKlYRlJJLk7/view?usp=drive_link", icon: "app", cls: "app-cook" },
@@ -264,6 +271,7 @@ $("details").innerHTML = [["phone", prettyPhone(P.phone)], ["mail", P.email], ["
   .map(([i, v]) => `<div class="row">${icon(i)}<span>${text(v)}</span></div>`).join("");
 
 P.links.forEach(l => $("links").append(row(l)));
+P.work.forEach(l => $("work").append(row(l)));
 P.apps.forEach(l => $("apps").append(row(l, true)));
 
 // GCash: walang official link na naglalagay ng number sa Send Money,
