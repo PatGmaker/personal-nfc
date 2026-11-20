@@ -13,7 +13,7 @@
   :root {
     --bg:#eef2f8; --surface:#ffffff; --surface-2:#f4f7fc; --fg:#0f172a; --muted:#4f5a70; --line:#dde4ef;
     --navy:#0a1f4d; --navy-2:#143c8f; --blue:#0b4fd1; --blue-2:#2f8cff; --on-blue:#ffffff;
-    --tint:#e6efff; --ring:#2f8cff;
+    --tint:#e6efff; --ring:#2f8cff; --chip-fg:#0b3a9e;
     --display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
     --body:"Inter", "Segoe UI", system-ui, sans-serif;
     --r-lg:22px; --r-md:14px; --r-sm:10px;
@@ -21,10 +21,10 @@
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --bg:#070d1b; --surface:#0f1830; --surface-2:#142042; --fg:#eaf0ff; --muted:#a3aec8; --line:#22305a;
-    --blue:#3b82f6; --tint:#16264d; color-scheme:dark } }
+    --blue:#3b82f6; --tint:#16264d; --chip-fg:#bcd3ff; color-scheme:dark } }
   :root[data-theme="dark"] {
     --bg:#070d1b; --surface:#0f1830; --surface-2:#142042; --fg:#eaf0ff; --muted:#a3aec8; --line:#22305a;
-    --blue:#3b82f6; --tint:#16264d; color-scheme:dark }
+    --blue:#3b82f6; --tint:#16264d; --chip-fg:#bcd3ff; color-scheme:dark }
 
   * { box-sizing:border-box; }
   html { background:var(--bg); }
@@ -53,6 +53,9 @@
   .role { margin-top:6px; color:var(--blue); font-weight:600; font-size:14px; }
   .bio { margin:12px auto 0; max-width:34ch; color:var(--muted); font-size:14.5px; text-wrap:pretty; }
 
+  .chips { list-style:none; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:14px 0 0; padding:0; }
+  .chips li { display:inline-flex; align-items:center; gap:5px; padding:6px 11px; border-radius:999px; background:var(--tint); color:var(--chip-fg); font-size:12.5px; font-weight:600; }
+  .chips svg { width:14px; height:14px; }
   .primary { display:flex; align-items:center; justify-content:center; gap:10px; width:calc(100% - 44px); min-height:52px; margin:18px 22px 20px;
     border:0; border-radius:var(--r-md); background:linear-gradient(180deg, #1d63e0, #0a47c2); color:var(--on-blue);
     font:600 16px/1 var(--body); cursor:pointer; box-shadow:0 8px 18px -8px #0000004d;
@@ -136,6 +139,10 @@
   <symbol id="i-ig" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></symbol>
   <symbol id="i-app" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></symbol>
   <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h12v4M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2Z"/><circle cx="16" cy="14.5" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 9 5 4h14l2 5M3 9h18M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0M5 12v8h14v-8M10 20v-5h4v5"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z" fill="currentColor"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8ZM19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9Z"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v13m-5-5 5 5 5-5"/></symbol>
 </svg>
@@ -151,6 +158,7 @@
       <h1 id="name"></h1>
       <div class="role" id="role"></div>
       <p class="bio" id="bio"></p>
+      <ul class="chips" id="skills" aria-label="Skills"></ul>
     </div>
     <button class="primary" id="save" type="button"><svg aria-hidden="true"><use href="#i-user"/></svg>Save Contact</button>
     <div class="toast" id="toast" role="status"></div>
@@ -177,7 +185,10 @@ const P = {
   name: "Mr. Astrera Patrick P.",
   role: "IT Student",
   org: "ACTS Computer College",
-  bio: "IT student at ACTS Computer College. I build mobile apps like CookMate.AI and ForeCatch, plus web projects, business websites, digital video invitations, and other digital projects.",
+  bio: "I build apps, websites, and digital invitations for students and small businesses.",
+  skills: [                          // icon: app, web, store, film, spark
+    ["Mobile Apps", "app"], ["Web Design", "web"], ["Business Websites", "store"], ["Video Invitations", "film"], ["AI Apps", "spark"],
+  ],
   photo: PHOTO,                      // naka-embed na picture, o "" para initial lang
   phone: "09317628695",
   email: "patricklaptop30@gmail.com",
@@ -236,6 +247,7 @@ function row(item, isApp) {
 $("name").textContent = P.name;
 $("role").textContent = P.role + " · " + P.org;
 $("bio").textContent = P.bio;
+$("skills").innerHTML = P.skills.map(([t, i]) => `<li>${icon(i)}${text(t)}</li>`).join("");
 if (P.photo) $("photo").insertAdjacentHTML("afterbegin", `<img src="${text(P.photo)}" alt="${text(P.name)} at ACTS Computer College" width="720" height="960">`);
 $("save").onclick = saveContact;
 
